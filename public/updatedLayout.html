@@ -265,6 +265,33 @@
       color: black;
       text-decoration: none;
     }
+
+    /* Login Message Styles */
+    .login-message {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      z-index: 1000;
+      text-align: center;
+      max-width: 300px;
+      width: 90%;
+    }
+    
+    .login-message button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      margin-top: 1rem;
+      cursor: pointer;
+      font-weight: 500;
+    }
     
     @media (max-width: 768px) {
       .app-bar {
@@ -326,8 +353,7 @@
         <option value="">All Genres</option>
       </select>
       <button class="secondary" onclick="showFavourites()">Favorites</button>
-      <!-- Updated login button now calls the login() function to redirect to login.html -->
-      <button onclick="login()">Login</button>
+      <button id="authButton">Login</button>
     </div>
   </nav>
   
@@ -335,25 +361,31 @@
     <div class="no-results">Loading movies...</div>
   </main>
   
-  <!-- Modal for movie details -->
   <div id="movieModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeModal()">&times;</span>
       <div id="modalBody"></div>
     </div>
   </div>
-  
+
   <script>
     let allMovies = [];
     let favourites = JSON.parse(localStorage.getItem('favourites')) || [];
-
+    let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  
     async function loadMovies() {
       try {
         const response = await fetch('movies.json');
         const data = await response.json();
-        allMovies = data;
+        allMovies = data.map(movie => ({
+          ...movie,
+          Title: movie.Title || 'Untitled Movie',
+          Genre: movie.Genre || 'Unknown',
+          ID: movie.ID || Math.random().toString(36).substr(2, 9)
+        }));
         displayMovies(allMovies);
         populateGenres();
+        updateAuthUI();
       } catch (error) {
         console.error("Error loading movies:", error);
         document.getElementById("movieGrid").innerHTML = `
@@ -364,42 +396,37 @@
         `;
       }
     }
-
+  
     function displayMovies(movies) {
       const grid = document.getElementById('movieGrid');
       grid.innerHTML = '';
-      
+  
       if (movies.length === 0) {
         grid.innerHTML = '<div class="no-results">No movies found matching your criteria</div>';
         return;
       }
-      
+  
       movies.forEach(movie => {
         const card = document.createElement('div');
         card.className = 'movie-card';
-        
-        // Create the image element manually
+  
         const img = document.createElement('img');
         img.src = movie.Poster_URL || 'https://via.placeholder.com/300x450?text=No+Poster';
         img.alt = movie.Title;
         img.className = 'movie-poster';
-        
-        // Remove card if image fails to load
+  
         img.addEventListener('error', () => {
           card.remove();
         });
-        
-        // Create info container
+  
         const infoDiv = document.createElement('div');
         infoDiv.className = 'movie-info';
-        
-        // Title
+  
         const title = document.createElement('h3');
         title.className = 'movie-title';
         title.title = movie.Title;
         title.textContent = movie.Title;
-        
-        // Meta data container
+  
         const metaDiv = document.createElement('div');
         metaDiv.className = 'movie-meta';
         const genreSpan = document.createElement('span');
@@ -408,12 +435,10 @@
         dateSpan.textContent = movie["Release Date"].substring(0, 4);
         metaDiv.appendChild(genreSpan);
         metaDiv.appendChild(dateSpan);
-        
-        // Actions container
+  
         const actionsDiv = document.createElement('div');
         actionsDiv.className = 'movie-actions';
-        
-        // Details button now opens the modal with the movie details
+  
         const detailsBtn = document.createElement('button');
         detailsBtn.className = 'info-btn';
         detailsBtn.textContent = 'Details';
@@ -421,8 +446,7 @@
           e.stopPropagation();
           showMovieDetails(movie.ID);
         };
-        
-        // Favorite button (unchanged)
+  
         const favBtn = document.createElement('button');
         favBtn.className = 'fav-btn';
         const isFavorited = favourites.includes(movie.ID);
@@ -433,28 +457,25 @@
           favBtn.textContent = '♡ Add';
         }
         favBtn.onclick = (e) => {
-          e.stopPropagation();
-          toggleFavourite(movie.ID, favBtn);
+          toggleFavourite(movie.ID, favBtn, e);
         };
-        
+  
         actionsDiv.appendChild(detailsBtn);
         actionsDiv.appendChild(favBtn);
-        
-        // Assemble card
+  
         infoDiv.appendChild(title);
         infoDiv.appendChild(metaDiv);
         infoDiv.appendChild(actionsDiv);
         card.appendChild(img);
         card.appendChild(infoDiv);
-        
+  
         grid.appendChild(card);
       });
     }
-
+  
     function showMovieDetails(movieId) {
       const movie = allMovies.find(m => m.ID === movieId);
       if (movie) {
-        // Remove " 00:00:00" from the release date
         const cleanDate = movie["Release Date"].replace(" 00:00:00", "");
         const modalBody = document.getElementById('modalBody');
         modalBody.innerHTML = `
@@ -469,33 +490,56 @@
         openModal();
       }
     }
-    
+  
     function openModal() {
       document.getElementById('movieModal').style.display = 'block';
     }
-    
+  
     function closeModal() {
       document.getElementById('movieModal').style.display = 'none';
     }
+  
+    function toggleFavourite(movieId, button, event) {
+      event.stopPropagation();
+      
+      // Check login status directly from localStorage
+      if (localStorage.getItem('isLoggedIn') !== 'true') {
+        const message = document.createElement('div');
+        message.className = 'login-message';
+        message.innerHTML = `
+          <p>You must be logged in to favorite movies</p>
+          <button onclick="removeLoginMessage()">OK</button>
+          <button onclick="login()" style="margin-left:0.5rem;">Login Now</button>
+        `;
+        document.body.appendChild(message);
+        return;
+      }
 
-    function toggleFavourite(movieId, button) {
       const index = favourites.indexOf(movieId);
       if (index === -1) {
         favourites.push(movieId);
         button.classList.add('favorited');
-        button.innerHTML = '❤️ Added';
+        button.textContent = '❤️ Added';
       } else {
         favourites.splice(index, 1);
         button.classList.remove('favorited');
-        button.innerHTML = '♡ Add';
+        button.textContent = '♡ Add';
       }
       localStorage.setItem('favourites', JSON.stringify(favourites));
     }
 
+    function removeLoginMessage() {
+      const message = document.querySelector('.login-message');
+      if (message) {
+        message.remove();
+      }
+    }
+  
     function populateGenres() {
-      const genres = [...new Set(allMovies.flatMap(m => m.Genre.split(', ')))].sort();
+      const genres = [...new Set(allMovies.map(m => m.Genre))].sort();
       const filter = document.getElementById('genreFilter');
-      
+      filter.innerHTML = '<option value="">All Genres</option>';
+  
       genres.forEach(genre => {
         if (genre) {
           const option = document.createElement('option');
@@ -505,49 +549,86 @@
         }
       });
     }
-
-    // Event listener for search input: filter when Enter key is pressed
-    document.getElementById('searchInput').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        const query = this.value.toLowerCase();
-        const genre = document.getElementById('genreFilter').value;
-        const filtered = allMovies.filter(m => {
-          const matchesSearch = m.Title.toLowerCase().includes(query);
-          const matchesGenre = !genre || m.Genre.includes(genre);
-          return matchesSearch && matchesGenre;
-        });
-        displayMovies(filtered);
-      }
-    });
-
-    // Genre filter remains unchanged
-    document.getElementById('genreFilter').addEventListener('change', function() {
-      const genre = this.value;
-      const query = document.getElementById('searchInput').value.toLowerCase();
-      const filtered = allMovies.filter(m => {
-        const matchesSearch = m.Title.toLowerCase().includes(query);
-        const matchesGenre = !genre || m.Genre.includes(genre);
+  
+    function filterMovies() {
+      const genre = document.getElementById('genreFilter').value;
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      
+      const filtered = allMovies.filter(movie => {
+        const title = String(movie.Title || '').toLowerCase();
+        const matchesSearch = query === '' || title.includes(query);
+        const matchesGenre = genre === '' || movie.Genre === genre;
         return matchesSearch && matchesGenre;
       });
+      
       displayMovies(filtered);
-    });
-
+    }
+  
+    document.getElementById('genreFilter').addEventListener('change', filterMovies);
+    document.getElementById('searchInput').addEventListener('input', filterMovies);
+  
     function showFavourites() {
+      const favButton = document.querySelector('.controls button.secondary');
       if (favourites.length === 0) {
         alert("You haven't added any favorites yet!");
         return;
       }
       const favMovies = allMovies.filter(m => favourites.includes(m.ID));
       displayMovies(favMovies);
+  
+      favButton.textContent = "Home";
+      favButton.onclick = showHome;
+    }
+  
+    function showHome() {
+      displayMovies(allMovies);
+  
+      const favButton = document.querySelector('.controls button.secondary');
+      favButton.textContent = "Favorites";
+      favButton.onclick = showFavourites;
     }
 
-    // Updated login function to redirect to login.html
+    function updateAuthUI() {
+      const authButton = document.getElementById('authButton');
+      if (localStorage.getItem('isLoggedIn') === 'true') {
+        isLoggedIn = true;
+        authButton.textContent = "Logout";
+        authButton.onclick = logout;
+      } else {
+        isLoggedIn = false;
+        authButton.textContent = "Login";
+        authButton.onclick = login;
+      }
+    }
+
     function login() {
-      window.location.href = "login.html";
+      // Open login page as a popup
+      const loginWindow = window.open('login.html', 'loginWindow', 'width=400,height=500');
+      
+      // Check for login status every 100ms
+      const checkLogin = setInterval(() => {
+        if (loginWindow.closed) {
+          clearInterval(checkLogin);
+          updateAuthUI();
+        }
+      }, 100);
     }
 
-    // Initialize
+    function logout() {
+      isLoggedIn = false;
+      localStorage.removeItem('isLoggedIn');
+      updateAuthUI();
+      alert("You have been logged out.");
+    }
+
+    // Listen for login success message from popup
+    window.addEventListener('message', function(event) {
+      if (event.data === 'loginSuccess') {
+        isLoggedIn = true;
+        updateAuthUI();
+      }
+    });
+
     window.addEventListener('DOMContentLoaded', loadMovies);
   </script>
 </body>
