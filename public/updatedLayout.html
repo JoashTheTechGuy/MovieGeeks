@@ -226,6 +226,46 @@
       color: var(--gray);
     }
     
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    
+    .modal-content {
+      background-color: #fefefe;
+      margin: 10% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 500px;
+      border-radius: 8px;
+      position: relative;
+    }
+    
+    .close {
+      color: #aaa;
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+    }
+    
     @media (max-width: 768px) {
       .app-bar {
         flex-direction: column;
@@ -286,6 +326,7 @@
         <option value="">All Genres</option>
       </select>
       <button class="secondary" onclick="showFavourites()">Favorites</button>
+      <!-- Updated login button now calls the login() function to redirect to login.html -->
       <button onclick="login()">Login</button>
     </div>
   </nav>
@@ -293,7 +334,15 @@
   <main class="movie-grid" id="movieGrid">
     <div class="no-results">Loading movies...</div>
   </main>
-
+  
+  <!-- Modal for movie details -->
+  <div id="movieModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+  
   <script>
     let allMovies = [];
     let favourites = JSON.parse(localStorage.getItem('favourites')) || [];
@@ -324,48 +373,109 @@
         grid.innerHTML = '<div class="no-results">No movies found matching your criteria</div>';
         return;
       }
-
+      
       movies.forEach(movie => {
         const card = document.createElement('div');
         card.className = 'movie-card';
         
-        const isFavorited = favourites.includes(movie.ID);
+        // Create the image element manually
+        const img = document.createElement('img');
+        img.src = movie.Poster_URL || 'https://via.placeholder.com/300x450?text=No+Poster';
+        img.alt = movie.Title;
+        img.className = 'movie-poster';
         
-        card.innerHTML = `
-          <img src="${movie.Poster_URL || 'https://via.placeholder.com/300x450?text=No+Poster'}" 
-               alt="${movie.Title}" 
-               class="movie-poster"
-               onerror="this.src='https://via.placeholder.com/300x450?text=Poster+Missing'">
-          <div class="movie-info">
-            <h3 class="movie-title" title="${movie.Title}">${movie.Title}</h3>
-            <div class="movie-meta">
-              <span>${movie.Genre}</span>
-              <span>${movie["Release Date"].substring(0, 4)}</span>
-            </div>
-            <div class="movie-actions">
-              <button class="info-btn" onclick="showMovieInfo(${movie.ID})">Details</button>
-              <button class="fav-btn ${isFavorited ? 'favorited' : ''}" 
-                      onclick="toggleFavourite(${movie.ID}, this)">
-                ${isFavorited ? '❤️ Added' : '♡ Add'}
-              </button>
-            </div>
-          </div>
-        `;
+        // Remove card if image fails to load
+        img.addEventListener('error', () => {
+          card.remove();
+        });
+        
+        // Create info container
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'movie-info';
+        
+        // Title
+        const title = document.createElement('h3');
+        title.className = 'movie-title';
+        title.title = movie.Title;
+        title.textContent = movie.Title;
+        
+        // Meta data container
+        const metaDiv = document.createElement('div');
+        metaDiv.className = 'movie-meta';
+        const genreSpan = document.createElement('span');
+        genreSpan.textContent = movie.Genre;
+        const dateSpan = document.createElement('span');
+        dateSpan.textContent = movie["Release Date"].substring(0, 4);
+        metaDiv.appendChild(genreSpan);
+        metaDiv.appendChild(dateSpan);
+        
+        // Actions container
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'movie-actions';
+        
+        // Details button now opens the modal with the movie details
+        const detailsBtn = document.createElement('button');
+        detailsBtn.className = 'info-btn';
+        detailsBtn.textContent = 'Details';
+        detailsBtn.onclick = (e) => {
+          e.stopPropagation();
+          showMovieDetails(movie.ID);
+        };
+        
+        // Favorite button (unchanged)
+        const favBtn = document.createElement('button');
+        favBtn.className = 'fav-btn';
+        const isFavorited = favourites.includes(movie.ID);
+        if (isFavorited) {
+          favBtn.classList.add('favorited');
+          favBtn.textContent = '❤️ Added';
+        } else {
+          favBtn.textContent = '♡ Add';
+        }
+        favBtn.onclick = (e) => {
+          e.stopPropagation();
+          toggleFavourite(movie.ID, favBtn);
+        };
+        
+        actionsDiv.appendChild(detailsBtn);
+        actionsDiv.appendChild(favBtn);
+        
+        // Assemble card
+        infoDiv.appendChild(title);
+        infoDiv.appendChild(metaDiv);
+        infoDiv.appendChild(actionsDiv);
+        card.appendChild(img);
+        card.appendChild(infoDiv);
+        
         grid.appendChild(card);
       });
     }
 
-    function showMovieInfo(movieId) {
+    function showMovieDetails(movieId) {
       const movie = allMovies.find(m => m.ID === movieId);
       if (movie) {
-        alert(`Title: ${movie.Title}\n\n` +
-              `Release Date: ${movie["Release Date"]}\n` +
-              `Runtime: ${movie["Run Time"]} minutes\n` +
-              `Genre: ${movie.Genre}\n` +
-              `Director: ${movie.Director}\n` +
-              `Rating: ${movie.Certificate}\n` +
-              `Box Office: $${movie["Box Office"].toLocaleString()}`);
+        // Remove " 00:00:00" from the release date
+        const cleanDate = movie["Release Date"].replace(" 00:00:00", "");
+        const modalBody = document.getElementById('modalBody');
+        modalBody.innerHTML = `
+          <h3>${movie.Title}</h3>
+          <p><strong>Release Date:</strong> ${cleanDate}</p>
+          <p><strong>Runtime:</strong> ${movie["Run Time"]} minutes</p>
+          <p><strong>Genre:</strong> ${movie.Genre}</p>
+          <p><strong>Director:</strong> ${movie.Director}</p>
+          <p><strong>Rating:</strong> ${movie.Certificate}</p>
+          <p><strong>Box Office:</strong> $${movie["Box Office"].toLocaleString()}</p>
+        `;
+        openModal();
       }
+    }
+    
+    function openModal() {
+      document.getElementById('movieModal').style.display = 'block';
+    }
+    
+    function closeModal() {
+      document.getElementById('movieModal').style.display = 'none';
     }
 
     function toggleFavourite(movieId, button) {
@@ -396,29 +506,30 @@
       });
     }
 
-    document.getElementById('searchInput').addEventListener('input', function() {
-      const query = this.value.toLowerCase();
-      const genre = document.getElementById('genreFilter').value;
-      
-      const filtered = allMovies.filter(m => {
-        const matchesSearch = m.Title.toLowerCase().includes(query);
-        const matchesGenre = !genre || m.Genre.includes(genre);
-        return matchesSearch && matchesGenre;
-      });
-      
-      displayMovies(filtered);
+    // Event listener for search input: filter when Enter key is pressed
+    document.getElementById('searchInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const query = this.value.toLowerCase();
+        const genre = document.getElementById('genreFilter').value;
+        const filtered = allMovies.filter(m => {
+          const matchesSearch = m.Title.toLowerCase().includes(query);
+          const matchesGenre = !genre || m.Genre.includes(genre);
+          return matchesSearch && matchesGenre;
+        });
+        displayMovies(filtered);
+      }
     });
 
+    // Genre filter remains unchanged
     document.getElementById('genreFilter').addEventListener('change', function() {
       const genre = this.value;
       const query = document.getElementById('searchInput').value.toLowerCase();
-      
       const filtered = allMovies.filter(m => {
         const matchesSearch = m.Title.toLowerCase().includes(query);
         const matchesGenre = !genre || m.Genre.includes(genre);
         return matchesSearch && matchesGenre;
       });
-      
       displayMovies(filtered);
     });
 
@@ -431,14 +542,9 @@
       displayMovies(favMovies);
     }
 
+    // Updated login function to redirect to login.html
     function login() {
-      const username = prompt('Enter username:');
-      const password = prompt('Enter password:');
-      if (username === 'bob' && password === 'bobpass') {
-        alert(`Welcome back, ${username}!`);
-      } else if (username && password) {
-        alert('Invalid credentials. Try username: bob, password: bobpass');
-      }
+      window.location.href = "login.html";
     }
 
     // Initialize

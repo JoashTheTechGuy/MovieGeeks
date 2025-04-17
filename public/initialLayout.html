@@ -111,51 +111,132 @@
       populateGenres();
     }
 
+    // function displayMovies(movies) {
+    //   const grid = document.getElementById('movieGrid');
+    //   grid.innerHTML = '';
+    //   movies.forEach(movie => {
+    //     const card = document.createElement('div');
+    //     card.className = 'card';
+
+    //     const img = document.createElement('img');
+    //     img.src = movie.Poster_URL;
+    //     img.alt = 'Poster';
+
+    //     const title = document.createElement('h3');
+    //     title.textContent = movie.Title;
+
+    //     const infoBtn = document.createElement('button');
+    //     infoBtn.textContent = 'More info →';
+
+    //     const favBtn = document.createElement('button');
+    //     favBtn.textContent = favourites.includes(movie.ID) ? 'Added to Favourites!' : 'Add to Favourites';
+    //     favBtn.onclick = () => {
+    //       if (!favourites.includes(movie.ID)) {
+    //         favourites.push(movie.ID);
+    //         favBtn.textContent = 'Added to Favourites!';
+    //       }
+    //     };
+
+    //     card.appendChild(img);
+    //     card.appendChild(title);
+    //     card.appendChild(infoBtn);
+    //     card.appendChild(favBtn);
+    //     grid.appendChild(card);
+    //   });
+    // }
+
+    // function populateGenres() {
+    //   const genres = [...new Set(allMovies.map(m => m.Genre))];
+    //   const filter = document.getElementById('genreFilter');
+    //   filter.innerHTML = '<option value="">Genres</option>';
+    //   genres.forEach(genre => {
+    //     const option = document.createElement('option');
+    //     option.value = genre;
+    //     option.textContent = genre;
+    //     filter.appendChild(option);
+    //   });
+    // }
+
     function displayMovies(movies) {
-      const grid = document.getElementById('movieGrid');
-      grid.innerHTML = '';
-      movies.forEach(movie => {
-        const card = document.createElement('div');
-        card.className = 'card';
-
-        const img = document.createElement('img');
-        img.src = movie.Poster_URL;
-        img.alt = 'Poster';
-
-        const title = document.createElement('h3');
-        title.textContent = movie.Title;
-
-        const infoBtn = document.createElement('button');
-        infoBtn.textContent = 'More info →';
-
-        const favBtn = document.createElement('button');
-        favBtn.textContent = favourites.includes(movie.ID) ? 'Added to Favourites!' : 'Add to Favourites';
-        favBtn.onclick = () => {
-          if (!favourites.includes(movie.ID)) {
-            favourites.push(movie.ID);
-            favBtn.textContent = 'Added to Favourites!';
-          }
-        };
-
-        card.appendChild(img);
-        card.appendChild(title);
-        card.appendChild(infoBtn);
-        card.appendChild(favBtn);
-        grid.appendChild(card);
-      });
+    const grid = document.getElementById('movieGrid');
+    grid.innerHTML = '';
+    
+    if (movies.length === 0) {
+      grid.innerHTML = '<div class="no-results">No movies found matching your criteria</div>';
+      return;
     }
-
-    function populateGenres() {
-      const genres = [...new Set(allMovies.map(m => m.Genre))];
-      const filter = document.getElementById('genreFilter');
-      filter.innerHTML = '<option value="">Genres</option>';
-      genres.forEach(genre => {
-        const option = document.createElement('option');
-        option.value = genre;
-        option.textContent = genre;
-        filter.appendChild(option);
+    
+    movies.forEach(movie => {
+      const card = document.createElement('div');
+      card.className = 'movie-card';
+      
+      // Create the image element manually instead of embedding in innerHTML
+      const img = document.createElement('img');
+      img.src = movie.Poster_URL || 'https://via.placeholder.com/300x450?text=No+Poster';
+      img.alt = movie.Title;
+      img.className = 'movie-poster';
+      
+      // Remove the entire card if the image fails to load
+      img.addEventListener('error', () => {
+        card.remove();
       });
-    }
+      
+      // Create the rest of the card content
+      const infoDiv = document.createElement('div');
+      infoDiv.className = 'movie-info';
+      
+      // Title
+      const title = document.createElement('h3');
+      title.className = 'movie-title';
+      title.title = movie.Title;
+      title.textContent = movie.Title;
+      
+      // Meta data container
+      const metaDiv = document.createElement('div');
+      metaDiv.className = 'movie-meta';
+      const genreSpan = document.createElement('span');
+      genreSpan.textContent = movie.Genre;
+      const dateSpan = document.createElement('span');
+      dateSpan.textContent = movie["Release Date"].substring(0, 4);
+      metaDiv.appendChild(genreSpan);
+      metaDiv.appendChild(dateSpan);
+      
+      // Actions container
+      const actionsDiv = document.createElement('div');
+      actionsDiv.className = 'movie-actions';
+      
+      const detailsBtn = document.createElement('button');
+      detailsBtn.className = 'info-btn';
+      detailsBtn.textContent = 'Details';
+      detailsBtn.onclick = () => showMovieInfo(movie.ID);
+      
+      const favBtn = document.createElement('button');
+      favBtn.className = 'fav-btn';
+      const isFavorited = favourites.includes(movie.ID);
+      if (isFavorited) {
+        favBtn.classList.add('favorited');
+        favBtn.textContent = '❤️ Added';
+      } else {
+        favBtn.textContent = '♡ Add';
+      }
+      favBtn.onclick = () => toggleFavourite(movie.ID, favBtn);
+      
+      actionsDiv.appendChild(detailsBtn);
+      actionsDiv.appendChild(favBtn);
+      
+      // Append everything to the info container
+      infoDiv.appendChild(title);
+      infoDiv.appendChild(metaDiv);
+      infoDiv.appendChild(actionsDiv);
+      
+      // Append image and info to the card
+      card.appendChild(img);
+      card.appendChild(infoDiv);
+      
+      // Append the card to the grid if the image is valid
+      grid.appendChild(card);
+    });
+  }
 
     document.getElementById('searchInput').addEventListener('input', e => {
       const query = e.target.value.toLowerCase();
