@@ -65,60 +65,26 @@
 
     .login-form-content h1 {
       font-size: 1.75rem;
-      margin-bottom: 0.5rem;
+      margin-bottom: 1.5rem;
       color: var(--primary-dark);
-    }
-
-    .login-form-content p {
-      margin-bottom: 2rem;
-      color: var(--gray);
-    }
-
-    .social-login {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .social-login a {
-      flex: 1;
       text-align: center;
-      padding: 0.75rem 0;
-      border: 1px solid #dee2e6;
-      border-radius: 4px;
-      text-decoration: none;
-      color: var(--dark);
-      font-weight: 500;
-      transition: background-color 0.3s ease;
-    }
-
-    .social-login a:hover {
-      background-color: var(--light);
-    }
-
-    .divider {
-      text-align: center;
-      margin-bottom: 1.5rem;
-      color: var(--gray);
-      font-size: 0.9rem;
-      position: relative;
-    }
-
-    .divider::before,
-    .divider::after {
-      content: "";
-      display: inline-block;
-      width: 40%;
-      height: 1px;
-      background-color: #dee2e6;
-      vertical-align: middle;
-      margin: 0 0.5rem;
     }
 
     .login-form {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-group label {
+      font-weight: 500;
+      color: var(--dark);
     }
 
     .login-form input {
@@ -143,8 +109,10 @@
       padding: 0.75rem;
       border-radius: 4px;
       font-size: 1rem;
+      font-weight: 600;
       cursor: pointer;
       transition: background-color 0.3s ease, transform 0.2s ease;
+      margin-top: 1rem;
     }
 
     .login-form button:hover {
@@ -232,23 +200,21 @@
 
       <div class="login-form-content">
         <h1>Login to Your Account</h1>
-        <p>Login using social networks</p>
-        <div class="social-login">
-          <a href="#">Facebook</a>
-          <a href="#">Google</a>
-          <a href="#">GitHub</a>
-        </div>
-        <div class="divider">OR</div>
-        <form class="login-form" action="#" method="POST">
-          <input type="email" name="email" placeholder="Email" required />
-          <input type="password" name="password" placeholder="Password" required />
+        <form class="login-form" onsubmit="return authenticate(event)">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" placeholder="Enter your username" required />
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required />
+          </div>
           <button type="submit">Sign In</button>
         </form>
       </div>
     </div>
 
     <div class="signup-panel">
-      <!-- Clicking the '×' will simply redirect back to the main site -->
       <button class="close-btn" onclick="location.href='updatedLayout.html';">&times;</button>
       <h2>New Here?</h2>
       <p>
@@ -259,5 +225,39 @@
 
   </div>
 
+  <script>
+    function authenticate(event) {
+      event.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      
+      if (username === "bob" && password === "bobpass") {
+        // Store login state
+        localStorage.setItem('isLoggedIn', 'true');
+        
+        // Check if we were opened from the main page
+        if (window.opener && !window.opener.closed) {
+          // Notify main page of successful login
+          window.opener.postMessage('loginSuccess', '*');
+          window.close();
+        } else {
+          // If not opened as popup, redirect to main page
+          window.location.href = "updatedLayout.html"; // or your main page filename
+        }
+      } else {
+        alert("Invalid credentials. Try username: bob, password: bobpass");
+      }
+      return false;
+    }
+
+    // Handle close button to go back to main page
+    document.querySelector('.close-btn').addEventListener('click', function() {
+      if (window.opener && !window.opener.closed) {
+        window.close();
+      } else {
+        window.location.href = "updatedLayout.html"; // or your main page filename
+      }
+    });
+  </script>
 </body>
 </html>
