@@ -17,6 +17,11 @@
             --dark: #212529;
             --gray: #6c757d;
             --danger: #e76f51;
+            --bg-dark: #1a202c; /* Darker background */
+            --card-bg: #2d3748; /* Dark card background */
+            --text-primary: #e2e8f0; /* Light text for dark bg */
+            --text-secondary: #a0aec0; /* Secondary text */
+            --border-color: #4a5568; /* Border color */
         }
 
         /* Basic reset and body styles */
@@ -28,8 +33,8 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--light);
-            color: var(--dark);
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
             line-height: 1.6;
         }
 
@@ -46,6 +51,7 @@
             font-size: 1.1rem;
             opacity: 0.9;
             margin-top: 0.5rem;
+            color: var(--text-primary);
         }
 
         /* App bar navigation */
@@ -54,11 +60,12 @@
             justify-content: space-between;
             align-items: center;
             padding: 1rem 2rem;
-            background-color: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            background-color: var(--bg-dark);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             position: sticky;
             top: 0;
             z-index: 100;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .logo {
@@ -67,7 +74,7 @@
             gap: 0.75rem;
             font-weight: 700;
             font-size: 1.25rem;
-            color: var(--primary-dark);
+            color: var(--primary);
         }
 
         .logo img {
@@ -85,18 +92,24 @@
         .search-container input {
             width: 100%;
             padding: 0.75rem 1.25rem;
-            border: 1px solid #dee2e6;
+            border: 1px solid var(--border-color);
             border-radius: 50px;
             font-size: 1rem;
             transition: all 0.3s ease;
             padding-left: 3rem;
-            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236c757d' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E") no-repeat 1.25rem center;
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23a0aec0' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E") no-repeat 1.25rem center;
         }
 
         .search-container input:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.2);
+        }
+
+        .search-container input::placeholder {
+            color: var(--text-secondary);
         }
 
         .controls {
@@ -106,9 +119,8 @@
 
         select, .controls button {
             padding: 0.75rem 1.25rem;
-            border: 1px solid #dee2e6;
+            border: 1px solid var(--border-color);
             border-radius: 50px;
-            background-color: white;
             font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -116,7 +128,9 @@
 
         select {
             appearance: none;
-            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236c757d' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E") no-repeat calc(100% - 1rem) center;
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23a0aec0' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E") no-repeat calc(100% - 1rem) center;
             padding-right: 2.5rem;
         }
 
@@ -134,13 +148,13 @@
         }
 
         .controls button.secondary {
-            background-color: white;
+            background-color: transparent;
             color: var(--primary);
             border: 1px solid var(--primary);
         }
 
         .controls button.secondary:hover {
-            background-color: #f0f0f0;
+            background-color: rgba(42, 157, 143, 0.1);
         }
 
         /* Movie grid layout */
@@ -154,17 +168,19 @@
         }
 
         .movie-card {
-            background: white;
+            background: var(--card-bg);
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
             position: relative;
+            border: 1px solid var(--border-color);
         }
 
         .movie-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.2);
+            border-color: var(--primary);
         }
 
         .movie-poster {
@@ -185,12 +201,25 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            color: var(--text-primary);
+        }
+
+        .movie-meta-section p {
+            margin: 0.5rem 0;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+        
+        .tmdb-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .movie-meta {
             display: flex;
             justify-content: space-between;
-            color: var(--gray);
+            color: var(--text-secondary);
             font-size: 0.9rem;
             margin-bottom: 1rem;
         }
@@ -215,10 +244,18 @@
             color: white;
         }
 
+        .info-btn:hover {
+            background-color: #21867a;
+        }
+
         .fav-btn {
-            background-color: white;
+            background-color: transparent;
             color: var(--primary);
             border: 1px solid var(--primary) !important;
+        }
+
+        .fav-btn:hover {
+            background-color: rgba(42, 157, 143, 0.1);
         }
 
         .fav-btn.favorited {
@@ -227,11 +264,84 @@
             border-color: var(--danger) !important;
         }
 
+        .fav-btn.favorited:hover {
+            background-color: #d1583e;
+        }
+
         .no-results {
             grid-column: 1/-1;
             text-align: center;
             padding: 3rem;
-            color: var(--gray);
+            color: var(--text-secondary);
+        }
+
+        /* Pagination styles */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+            gap: 0.5rem;
+        }
+
+        .pagination button {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pagination button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .pagination button.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: var(--card-bg);
+        }
+
+        /* Rating badge styles */
+        .rating-badge {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .rating-excellent {
+            background-color: #2e7d32;
+        }
+
+        .rating-good {
+            background-color: #4caf50;
+        }
+
+        .rating-average {
+            background-color: #ffc107;
+        }
+
+        .rating-poor {
+            background-color: #fb8c00;
+        }
+
+        .rating-bad {
+            background-color: #d32f2f;
+        }
+
+        .tmdb-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         /* Modal Styles */
@@ -244,24 +354,25 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.7);
         }
 
         .modal-content {
-            background-color: #fefefe;
+            background-color: var(--card-bg);
             margin: 5% auto;
             padding: 25px;
-            border: 1px solid #888;
+            border: 1px solid var(--border-color);
             width: 90%;
             max-width: 1000px;
             border-radius: 8px;
             position: relative;
             max-height: 85vh;
             overflow-y: auto;
+            color: var(--text-primary);
         }
 
         .close {
-            color: #aaa;
+            color: var(--text-secondary);
             position: absolute;
             top: 15px;
             right: 20px;
@@ -272,23 +383,24 @@
 
         .close:hover,
         .close:focus {
-            color: black;
+            color: var(--text-primary);
             text-decoration: none;
         }
 
         /* Chart container styles */
         .chart-container {
-            background: white;
+            background: var(--bg-dark);
             border-radius: 8px;
             padding: 1rem;
             margin-top: 1rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
         }
 
         .modal-content h4 {
             margin: 1.5rem 0 0.5rem;
-            color: var(--primary-dark);
+            color: var(--text-primary);
             font-size: 1.1rem;
         }
 
@@ -321,21 +433,23 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            background: white;
+            background: var(--bg-dark);
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
         }
 
         .keyword {
             padding: 0.3rem 0.6rem;
-            background: #f0f0f0;
+            background: var(--primary-dark);
+            color: var(--text-primary);
             border-radius: 20px;
             display: inline-block;
         }
 
         .chart-note {
             font-size: 0.8rem;
-            color: var(--gray);
+            color: var(--text-secondary);
             text-align: center;
             margin-top: 0.5rem;
             font-style: italic;
@@ -347,7 +461,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: white;
+            background: var(--card-bg);
             padding: 2rem;
             border-radius: 8px;
             box-shadow: 0 0 20px rgba(0,0,0,0.2);
@@ -355,6 +469,8 @@
             text-align: center;
             max-width: 300px;
             width: 90%;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
         }
 
         .login-message button {
@@ -366,6 +482,10 @@
             margin-top: 1rem;
             cursor: pointer;
             font-weight: 500;
+        }
+
+        .login-message button:hover {
+            background-color: #21867a;
         }
 
         /* New styles for enhanced layout */
@@ -400,6 +520,185 @@
             display: flex;
             flex-wrap: wrap;
             gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .keyword-pill {
+            background-color: var(--accent);
+            color: var(--dark);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .metrics-section {
+            border-top: 1px solid var(--border-color);
+            padding-top: 2rem;
+        }
+
+        .metrics-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 768px) {
+            .app-bar {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .search-container {
+                margin: 0.5rem 0;
+                width: 100%;
+            }
+
+            .controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls button {
+                min-width: auto;
+                padding: 0.75rem;
+                font-size: 0.8rem;
+            }
+
+            select {
+                flex: 1;
+            }
+
+            .movie-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                padding: 1rem;
+                gap: 1rem;
+            }
+
+            .movie-poster {
+                height: 240px;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 15px;
+            }
+
+            .movie-details-container {
+                flex-direction: column;
+            }
+
+            .movie-poster-container {
+                flex: 0 0 auto;
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        .chart-conclusion {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background-color: rgba(42, 157, 143, 0.1);
+            border-radius: 4px;
+            font-style: italic;
+        }
+        
+        .vote-count-indicator {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+        
+        .high-votes {
+            background-color: rgba(46, 125, 50, 0.2);
+            color: #4caf50;
+        }
+        
+        .medium-votes {
+            background-color: rgba(251, 192, 45, 0.2);
+            color: #fb8c00;
+        }
+        
+        .low-votes {
+            background-color: rgba(211, 47, 47, 0.2);
+            color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+    <!-- Rest of your HTML content remains the same -->
+    <header>
+        <h1>RECS 4 U</h1>
+        <p>Curated movie recommendations tailored for you</p>
+    </header>
+    <nav class="app-bar">
+        <div class="logo">
+            <img src="https://img.icons8.com/ios-filled/50/2a9d8f/film-reel.png" alt="Movie recommendations logo"/>
+            RECS 4 U
+        </div>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search movies..." aria-label="Search movies">
+        </div>
+        <div class="controls">
+            <select id="genreFilter" title="Filter by genre" aria-label="Filter by genre">
+                <option value="">All Genres</option>
+            </select>
+            <button type="button" class="secondary" onclick="showFavourites()">Favorites</button>
+            <button type="button" id="authButton">Login</button>
+        </div>
+    </nav>
+    <main class="movie-grid" id="movieGrid">
+        <div class="no-results">Loading movies...</div>
+    </main>
+    <div class="pagination" id="pagination">
+        <!-- Pagination buttons will be added here dynamically -->
+    </div>
+    <div id="movieModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()" role="button" aria-label="Close modal">&times;</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+    <script>
+        // Your JavaScript code remains exactly the same
+        // Global variables
+        let allMovies = [];
+        let currentMovies = [];
+        let favourites = JSON.parse(localStorage.getItem('favourites')) || [];
+        let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        const TMDB_API_KEY = "869e85c3ed0ecce228e4d34c5826e49a";
+        const API_BASE_URL = "https://api.themoviedb.org/3";
+        const MOVIES_PER_PAGE = 20;
+        let currentPage = 1;
+        let totalPages = 1;
+
+        // Main movie loading function
+        async function loadMovies() {
+            try {
+                document.getElementById("movieGrid").innerHTML = '<div class="no-results">Loading movies...</div>';
+                const movies = await fetchTMDBMovies();
+                allMovies = movies;
+                currentMovies = [...allMovies];
+                totalPages = Math.ceil(allMovies.length / MOVIES_PER_PAGE);
+                displayMovies(currentMovies);
+                populateGenres();
+                updateAuthUI();
+                setupPagination();
+            } catch (error) {
+                console.error("Error loading movies:", error);
+                document.getElementById("movieGrid").innerHTML = `
+                    <div class="no-results">
+                        ${error.message || 'Failed to load movies. Please try again later.'}
+                        <button onclick="loadMovies()">Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+        // Fetch movies from TMDB API
         async function fetchTMDBMovies() {
             try {
                 const genres = ['Action', 'Drama', 'Comedy', 'Science Fiction'];
@@ -408,13 +707,15 @@
                 for (const genreName of genres) {
                     const genreId = await fetchGenreId(genreName);
                     if (genreId) {
-                        const discoverUrl = `${API_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&with_genres=${genreId}&sort_by=vote_average.desc&vote_count.gte=100`;
+                        // Fetch 20 movies per genre
+                        const discoverUrl = `${API_BASE_URL}/discover/movie?api_key=${TMDB_API_KEY}&with_genres=${genreId}&sort_by=vote_average.desc&vote_count.gte=100&page=1&per_page=20`;
                         const response = await fetch(discoverUrl);
                         const data = await response.json();
 
                         if (data.results) {
+                            // Take all 20 movies for each genre
                             const movieDetails = await Promise.all(
-                                data.results.slice(0, 3).map(async movie => await fetchMovieDetails(movie.id))
+                                data.results.map(async movie => await fetchMovieDetails(movie.id))
                             );
                             movies.push(...movieDetails);
                         }
@@ -463,11 +764,16 @@
                 ? `https://image.tmdb.org/t/p/w500${movieData.poster_path}`
                 : 'https://via.placeholder.com/300x450?text=Poster+Not+Available';
 
+            // Calculate rating based on TMDB data
+            const rating = calculateMovieRating(movieData.vote_average, movieData.vote_count);
+
             return {
                 imdbID: movieData.imdb_id || `TMDB-${movieId}`,
                 Title: movieData.title,
                 Year: movieData.release_date ? movieData.release_date.substring(0, 4) : 'N/A',
-                Rated: 'N/A',
+                Rated: rating.text,
+                RatedColor: rating.color,
+                RatedClass: rating.class,
                 Released: movieData.release_date || 'N/A',
                 Runtime: movieData.runtime ? `${movieData.runtime} min` : 'N/A',
                 Genre: movieData.genres ? movieData.genres.map(g => g.name).join(', ') : 'N/A',
@@ -478,9 +784,8 @@
                 Language: movieData.original_language || 'N/A',
                 Country: movieData.production_countries ? movieData.production_countries.map(c => c.name).join(', ') : 'N/A',
                 Poster: posterPath,
-                Metascore: movieData.vote_average ? (movieData.vote_average * 10).toFixed(0) : 'N/A',
-                imdbRating: movieData.vote_average ? movieData.vote_average.toFixed(1) : 'N/A',
-                imdbVotes: movieData.vote_count || 'N/A',
+                vote_average: movieData.vote_average || 0,
+                vote_count: movieData.vote_count || 0,
                 Type: movieData.media_type || 'movie',
                 Response: 'True',
                 Images: [posterPath],
@@ -492,35 +797,103 @@
             };
         }
 
-        // Display movies in grid
+        // Calculate movie rating based on TMDB data
+        function calculateMovieRating(voteAverage, voteCount) {
+            if (!voteAverage || voteCount < 10) {
+                return {
+                    text: 'N/A',
+                    color: '#6c757d',
+                    class: 'rating-na'
+                };
+            }
+
+            // Adjust rating based on vote count (more votes = more reliable)
+            const adjustedRating = voteAverage * Math.min(1, voteCount / 1000);
+            let ratingText, ratingColor, ratingClass;
+
+            if (adjustedRating >= 8) {
+                ratingText = 'Excellent';
+                ratingColor = '#2e7d32';
+                ratingClass = 'rating-excellent';
+            } else if (adjustedRating >= 7) {
+                ratingText = 'Good';
+                ratingColor = '#4caf50';
+                ratingClass = 'rating-good';
+            } else if (adjustedRating >= 5) {
+                ratingText = 'Average';
+                ratingColor = '#ffc107';
+                ratingClass = 'rating-average';
+            } else if (adjustedRating >= 3) {
+                ratingText = 'Poor';
+                ratingColor = '#fb8c00';
+                ratingClass = 'rating-poor';
+            } else {
+                ratingText = 'Bad';
+                ratingColor = '#d32f2f';
+                ratingClass = 'rating-bad';
+            }
+
+            return {
+                text: ratingText,
+                color: ratingColor,
+                class: ratingClass,
+                value: adjustedRating.toFixed(1)
+            };
+        }
+
+        // Display movies in grid with pagination
         function displayMovies(movies) {
             const grid = document.getElementById('movieGrid');
             grid.innerHTML = '';
+            
             if (movies.length === 0) {
                 grid.innerHTML = '<div class="no-results">No movies found matching your criteria</div>';
                 return;
             }
-            movies.forEach(movie => {
+            
+            // Calculate pagination bounds
+            const startIdx = (currentPage - 1) * MOVIES_PER_PAGE;
+            const endIdx = Math.min(startIdx + MOVIES_PER_PAGE, movies.length);
+            const paginatedMovies = movies.slice(startIdx, endIdx);
+            
+            paginatedMovies.forEach(movie => {
                 const card = document.createElement('div');
                 card.className = 'movie-card';
                 const img = document.createElement('img');
                 img.src = movie.Poster || 'https://via.placeholder.com/300x450?text=No+Poster';
                 img.alt = `${movie.Title} poster`;
                 img.className = 'movie-poster';
-                 img.onerror = () => {
+                img.onerror = () => {
                     img.src = 'https://via.placeholder.com/300x450?text=Poster+Not+Available';
                 };
+                
                 const infoDiv = document.createElement('div');
                 infoDiv.className = 'movie-info';
                 const title = document.createElement('h3');
                 title.className = 'movie-title';
                 title.textContent = movie.Title;
+                
+                // Add rating badge
+                if (movie.Rated !== 'N/A') {
+                const ratingBadge = document.createElement('span');
+                ratingBadge.className = `rating-badge ${movie.RatedClass}`;
+                ratingBadge.title = `${movie.Rated} (${movie.vote_count} votes)`;
+                title.insertBefore(ratingBadge, title.firstChild);
+            }
+                
+                // Add vote count indicator
+                const voteCountIndicator = document.createElement('span');
+                voteCountIndicator.className = getVoteCountClass(movie.vote_count);
+                voteCountIndicator.textContent = `${movie.vote_count} votes`;
+                title.appendChild(voteCountIndicator);
+                
                 const metaDiv = document.createElement('div');
                 metaDiv.className = 'movie-meta';
                 metaDiv.innerHTML = `
                     <span>${movie.Genre.split(',')[0]}</span>
                     <span>${movie.Year}</span>
                 `;
+                
                 const actionsDiv = document.createElement('div');
                 actionsDiv.className = 'movie-actions';
                 actionsDiv.innerHTML = `
@@ -529,6 +902,7 @@
                         ${favourites.includes(movie.imdbID) ? '❤️ Added' : '♡ Add'}
                     </button>
                 `;
+                
                 infoDiv.appendChild(title);
                 infoDiv.appendChild(metaDiv);
                 infoDiv.appendChild(actionsDiv);
@@ -536,97 +910,223 @@
                 card.appendChild(infoDiv);
                 grid.appendChild(card);
             });
+            
+            // Update pagination UI
+            updatePaginationUI();
+        }
+        
+        // Setup pagination controls
+        function setupPagination() {
+            const paginationDiv = document.getElementById('pagination');
+            paginationDiv.innerHTML = '';
+            
+            if (totalPages <= 1) return;
+            
+            // Previous button
+            const prevButton = document.createElement('button');
+            prevButton.textContent = 'Previous';
+            prevButton.disabled = currentPage === 1;
+            prevButton.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    displayMovies(currentMovies);
+                }
+            });
+            paginationDiv.appendChild(prevButton);
+            
+            // Page buttons
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+            
+            if (endPage - startPage + 1 < maxVisiblePages) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+            
+            if (startPage > 1) {
+                const firstPageButton = document.createElement('button');
+                firstPageButton.textContent = '1';
+                firstPageButton.addEventListener('click', () => {
+                    currentPage = 1;
+                    displayMovies(currentMovies);
+                });
+                paginationDiv.appendChild(firstPageButton);
+                
+                if (startPage > 2) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.textContent = '...';
+                    paginationDiv.appendChild(ellipsis);
+                }
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = i;
+                if (i === currentPage) {
+                    pageButton.classList.add('active');
+                }
+                pageButton.addEventListener('click', () => {
+                    currentPage = i;
+                    displayMovies(currentMovies);
+                });
+                paginationDiv.appendChild(pageButton);
+            }
+            
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.textContent = '...';
+                    paginationDiv.appendChild(ellipsis);
+                }
+                
+                const lastPageButton = document.createElement('button');
+                lastPageButton.textContent = totalPages;
+                lastPageButton.addEventListener('click', () => {
+                    currentPage = totalPages;
+                    displayMovies(currentMovies);
+                });
+                paginationDiv.appendChild(lastPageButton);
+            }
+            
+            // Next button
+            const nextButton = document.createElement('button');
+            nextButton.textContent = 'Next';
+            nextButton.disabled = currentPage === totalPages;
+            nextButton.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    displayMovies(currentMovies);
+                }
+            });
+            paginationDiv.appendChild(nextButton);
+        }
+        
+        // Update pagination UI based on current page
+        function updatePaginationUI() {
+            const paginationButtons = document.querySelectorAll('#pagination button');
+            paginationButtons.forEach(button => {
+                button.classList.remove('active');
+                if (button.textContent === currentPage.toString()) {
+                    button.classList.add('active');
+                }
+                
+                // Update disabled state for prev/next buttons
+                if (button.textContent === 'Previous') {
+                    button.disabled = currentPage === 1;
+                } else if (button.textContent === 'Next') {
+                    button.disabled = currentPage === totalPages;
+                }
+            });
+        }
+        
+        function getVoteCountClass(voteCount) {
+            if (voteCount > 1000) return 'vote-count-indicator high-votes';
+            if (voteCount > 500) return 'vote-count-indicator medium-votes';
+            return 'vote-count-indicator low-votes';
         }
 
         function showMovieDetails(movieId) {
-            const movie = allMovies.find(m => m.imdbID === movieId);
-            if (!movie) return;
+    const movie = allMovies.find(m => m.imdbID === movieId);
+    if (!movie) return;
 
-            const cleanDate = movie["Release Date"].replace(" 00:00:00", "");
-            const runtimeMins = parseInt(movie["Run Time"]) || 0;
-            const boxOfficeMillions = movie["Box Office"] ? (movie["Box Office"] / 1000000).toFixed(1) : 0;
-            const genreAvg = calculateGenreAverages(movie.Genre.split(', ')[0]);
-            const ratingConclusion = getRatingConclusion(parseFloat(movie.imdbRating), genreAvg.rating);
-            const runtimeConclusion = getRuntimeConclusion(runtimeMins, genreAvg.runtime);
-            const boxOfficeConclusion = getBoxOfficeConclusion(movie["Box Office"], genreAvg.boxOffice);
+    const cleanDate = movie["Release Date"].replace(" 00:00:00", "");
+    const runtimeMins = parseInt(movie["Run Time"]) || 0;
+    const boxOfficeMillions = movie["Box Office"] ? (movie["Box Office"] / 1000000).toFixed(1) : 0;
+    const genreAvg = calculateGenreAverages(movie.Genre.split(', ')[0]);
+    const ratingConclusion = getRatingConclusion(movie.vote_average, genreAvg.rating, movie.vote_count);
+    const runtimeConclusion = getRuntimeConclusion(runtimeMins, genreAvg.runtime);
+    const boxOfficeConclusion = getBoxOfficeConclusion(movie["Box Office"], genreAvg.boxOffice);
 
-            document.getElementById('modalBody').innerHTML = `
-                <div class="movie-details-container">
-                    <div class="movie-poster-container">
-                        <img src="${movie.Poster}" class="movie-poster-large" onerror="this.src='https://via.placeholder.com/300x450?text=Poster+Not+Available'">
-                    </div>
-                    <div class="movie-info-container">
-                        <h2>${movie.Title}</h2>
-                        <div class="movie-meta-section">
-                            <p><strong>Release Date:</strong> ${cleanDate}</p>
-                            <p><strong>Runtime:</strong> ${runtimeMins} minutes</p>
-                            <p><strong>Genre:</strong> ${movie.Genre}</p>
-                            <p><strong>Director:</strong> ${movie.Director}</p>
-                            <p><strong>Rating:</strong> ${movie.Certificate}</p>
-                            <p><strong>IMDb Rating:</strong> ${movie.imdbRating}/10</p>
-                            <p><strong>Box Office:</strong> $${movie["Box Office"].toLocaleString()}</p>
-                            <p><strong>Country:</strong> ${movie.Country}</p>
-                        </div>
-                        <div class="plot-section">
-                            <h3>Plot Summary</h3>
-                            <p>${movie.Plot}</p>
-                        </div>
-                        <div class="keywords-section">
-                            <h3>Keywords</h3>
-                            <div class="keywords-container">
-                                ${movie.Keywords.map(keyword => `<span class="keyword-pill">${keyword}</span>`).join('')}
-                            </div>
-                        </div>
+    document.getElementById('modalBody').innerHTML = `
+        <div class="movie-details-container">
+            <div class="movie-poster-container">
+                <img src="${movie.Poster}" class="movie-poster-large" onerror="this.src='https://via.placeholder.com/300x450?text=Poster+Not+Available'">
+            </div>
+            <div class="movie-info-container">
+                <h2>${movie.Title}</h2>
+                <div class="movie-meta-section">
+                    <p><strong>Release Date:</strong> ${cleanDate}</p>
+                    <p><strong>Runtime:</strong> ${runtimeMins} minutes</p>
+                    <p><strong>Genre:</strong> ${movie.Genre}</p>
+                    <p><strong>Director:</strong> ${movie.Director}</p>
+                    <p><strong>TMDB Rating:</strong> 
+                        <span class="tmdb-rating">
+                            <span class="rating-badge ${movie.RatedClass}"></span>
+                            <span>${movie.Rated} (${movie.vote_count} votes)</span>
+                        </span>
+                    </p>
+                    <p><strong>Box Office:</strong> $${movie["Box Office"].toLocaleString()}</p>
+                    <p><strong>Country:</strong> ${movie.Country}</p>
+                </div>
+                <div class="plot-section">
+                    <h3>Plot Summary</h3>
+                    <p>${movie.Plot}</p>
+                </div>
+                <div class="keywords-section">
+                    <h3>Keywords</h3>
+                    <div class="keywords-container">
+                        ${movie.Keywords.map(keyword => `<span class="keyword-pill">${keyword}</span>`).join('')}
                     </div>
                 </div>
-                <div class="metrics-section">
-                    <h2 class="metrics-title">Movie Metrics</h2>
-                    <div class="chart-row">
-                        <div class="chart-item">
-                            <h3>Rating Comparison</h3>
-                            <canvas id="ratingChart"></canvas>
-                            <p class="chart-note">Compared to ${movie.Genre.split(', ')[0]} average</p>
-                            <p class="chart-conclusion">${ratingConclusion}</p>
-                        </div>
-                        <div class="chart-item">
-                            <h3>Runtime Analysis</h3>
-                            <canvas id="runtimeChart"></canvas>
-                            <p class="chart-note">${getRuntimeAssessment(runtimeMins)}</p>
-                            <p class="chart-conclusion">${runtimeConclusion}</p>
-                        </div>
-                    </div>
-                    <div class="chart-row">
-                        <div class="chart-item">
-                            <h3>Box Office Performance</h3>
-                            <canvas id="boxOfficeChart"></canvas>
-                            <p class="chart-note">Compared to ${movie.Genre.split(', ')[0]} average</p>
-                            <p class="chart-conclusion">${boxOfficeConclusion}</p>
-                        </div>
-                        <div class="chart-item">
-                            <h3>Genre Composition</h3>
-                            <canvas id="genreChart"></canvas>
-                            <p class="chart-note">Primary genre elements</p>
-                            <p class="chart-conclusion">${movie.Genre.split(', ')[0]} is the dominant genre</p>
-                        </div>
-                    </div>
+            </div>
+        </div>
+        <div class="metrics-section">
+            <h2 class="metrics-title">Movie Metrics</h2>
+            <div class="chart-row">
+                <div class="chart-item">
+                    <h3>Rating Comparison</h3>
+                    <canvas id="ratingChart"></canvas>
+                    <p class="chart-note">Compared to ${movie.Genre.split(', ')[0]} average</p>
+                    <p class="chart-conclusion">${ratingConclusion}</p>
                 </div>
-            `;
-            openModal();
-            // Initialize charts
-            createRatingChart(movie, genreAvg);
-            createRuntimeChart(movie, genreAvg);
-            createBoxOfficeChart(movie, genreAvg);
-            createGenreChart(movie);
-        }
+                <div class="chart-item">
+                    <h3>Runtime Analysis</h3>
+                    <canvas id="runtimeChart"></canvas>
+                    <p class="chart-note">${getRuntimeAssessment(runtimeMins)}</p>
+                    <p class="chart-conclusion">${runtimeConclusion}</p>
+                </div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-item">
+                    <h3>Box Office Performance</h3>
+                    <canvas id="boxOfficeChart"></canvas>
+                    <p class="chart-note">Compared to ${movie.Genre.split(', ')[0]} average</p>
+                    <p class="chart-conclusion">${boxOfficeConclusion}</p>
+                </div>
+                <div class="chart-item">
+                    <h3>Genre Composition</h3>
+                    <canvas id="genreChart"></canvas>
+                    <p class="chart-note">Primary genre elements</p>
+                    <p class="chart-conclusion">${movie.Genre.split(', ')[0]} is the dominant genre</p>
+                </div>
+            </div>
+        </div>
+    `;
+    openModal();
+    // Initialize charts
+    createRatingChart(movie, genreAvg);
+    createRuntimeChart(movie, genreAvg);
+    createBoxOfficeChart(movie, genreAvg);
+    createGenreChart(movie);
+}
+
 
         // Add these new helper functions for conclusions
-        function getRatingConclusion(movieRating, genreAvg) {
+        function getRatingConclusion(movieRating, genreAvg, voteCount) {
             const diff = movieRating - genreAvg;
-            if (diff > 1) return "This movie is significantly better rated than its genre average!";
-            if (diff > 0.3) return "This movie is better rated than its genre average.";
-            if (diff < -1) return "This movie is significantly worse rated than its genre average.";
-            if (diff < -0.3) return "This movie is worse rated than its genre average.";
-            return "This movie's rating is about average for its genre.";
+            let conclusion = "";
+            
+            if (voteCount < 500) {
+                conclusion = "Note: This rating is based on a relatively small number of votes.";
+            } else if (voteCount > 5000) {
+                conclusion = "Note: This rating is based on a large number of votes, making it very reliable.";
+            }
+            
+            if (diff > 1) return `This movie is significantly better rated than its genre average! ${conclusion}`;
+            if (diff > 0.3) return `This movie is better rated than its genre average. ${conclusion}`;
+            if (diff < -1) return `This movie is significantly worse rated than its genre average. ${conclusion}`;
+            if (diff < -0.3) return `This movie is worse rated than its genre average. ${conclusion}`;
+            return `This movie's rating is about average for its genre. ${conclusion}`;
         }
 
         function getRuntimeConclusion(movieRuntime, genreAvg) {
@@ -650,7 +1150,7 @@
 
         function calculateGenreAverages(primaryGenre) {
             const genreMovies = allMovies.filter(m => m.Genre.includes(primaryGenre));
-            const avgRating = genreMovies.reduce((sum, m) => sum + parseFloat(m.imdbRating || 0), 0) / genreMovies.length;
+            const avgRating = genreMovies.reduce((sum, m) => sum + parseFloat(m.vote_average || 0), 0) / genreMovies.length;
             const avgRuntime = genreMovies.reduce((sum, m) => sum + parseInt(m["Run Time"] || 0), 0) / genreMovies.length;
             const avgBoxOffice = genreMovies.reduce((sum, m) => sum + parseInt(m["Box Office"] || 0), 0) / genreMovies.length;
             return { rating: avgRating || 0, runtime: avgRuntime || 0, boxOffice: avgBoxOffice || 0 };
@@ -664,7 +1164,13 @@
 
         function createRatingChart(movie, genreAvg) {
             const ctx = document.getElementById('ratingChart').getContext('2d');
-            const movieRating = parseFloat(movie.imdbRating);
+            const movieRating = parseFloat(movie.vote_average);
+            const voteCount = movie.vote_count;
+            
+            // Calculate reliability score based on vote count
+            const reliabilityScore = Math.min(1, voteCount / 5000);
+            const reliabilityColor = `rgba(${Math.floor(231 * (1 - reliabilityScore) + 42)}, ${Math.floor(111 * (1 - reliabilityScore) + 157)}, ${Math.floor(81 * (1 - reliabilityScore) + 143)}, ${0.7 + (reliabilityScore * 0.3)})`;
+            
             new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -672,7 +1178,7 @@
                     datasets: [{
                         data: [movieRating, genreAvg.rating],
                         backgroundColor: [
-                            movieRating >= genreAvg.rating ? '#2a9d8f' : '#e76f51',
+                            reliabilityColor,
                             '#e9c46a'
                         ],
                         borderWidth: 1
@@ -686,7 +1192,7 @@
                             max: 10,
                             title: {
                                 display: true,
-                                text: 'IMDb Rating'
+                                text: 'TMDB Rating'
                             }
                         }
                     },
@@ -694,7 +1200,12 @@
                         legend: { display: false },
                         tooltip: {
                             callbacks: {
-                                label: ctx => `${ctx.raw.toFixed(1)}/10`
+                                label: ctx => {
+                                    if (ctx.dataIndex === 0) {
+                                        return `${ctx.raw.toFixed(1)}/10 (${voteCount} votes)`;
+                                    }
+                                    return `${ctx.raw.toFixed(1)}/10 (genre average)`;
+                                }
                             }
                         }
                     }
@@ -914,28 +1425,38 @@
         function filterMovies() {
             const genre = document.getElementById('genreFilter').value;
             const query = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = allMovies.filter(movie => {
+            currentMovies = allMovies.filter(movie => {
                 const matchesGenre = !genre || movie.Genre.includes(genre);
                 const matchesSearch = !query || movie.Title.toLowerCase().includes(query);
                 return matchesGenre && matchesSearch;
             });
-            displayMovies(filtered);
+            currentPage = 1; // Reset to first page when filtering
+            totalPages = Math.ceil(currentMovies.length / MOVIES_PER_PAGE);
+            displayMovies(currentMovies);
+            setupPagination();
         }
 
         function showFavourites() {
-          const favButton = document.querySelector('.controls button.secondary');
+            const favButton = document.querySelector('.controls button.secondary');
             if (favourites.length === 0) {
                 alert("You haven't added any favorites yet!");
                 return;
             }
-            const favMovies = allMovies.filter(m => favourites.includes(m.imdbID));
-            displayMovies(favMovies);
+            currentMovies = allMovies.filter(m => favourites.includes(m.imdbID));
+            currentPage = 1;
+            totalPages = Math.ceil(currentMovies.length / MOVIES_PER_PAGE);
+            displayMovies(currentMovies);
+            setupPagination();
             favButton.textContent = "Home";
             favButton.onclick = showHome;
         }
 
         function showHome() {
-            displayMovies(allMovies);
+            currentMovies = [...allMovies];
+            currentPage = 1;
+            totalPages = Math.ceil(currentMovies.length / MOVIES_PER_PAGE);
+            displayMovies(currentMovies);
+            setupPagination();
             const favButton = document.querySelector('.controls button.secondary');
             favButton.textContent = "Favorites";
             favButton.onclick = showFavourites;
