@@ -1623,13 +1623,7 @@ select:hover {
         }
 
         function login() {
-            const loginWindow = window.open('login.html', 'loginWindow', 'width=400,height=500');
-            const checkLogin = setInterval(() => {
-                if (loginWindow.closed) {
-                    clearInterval(checkLogin);
-                    updateAuthUI();
-                }
-            }, 100);
+            window.location.href = 'login.html';
         }
 
         function logout() {

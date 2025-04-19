@@ -53,6 +53,7 @@
       font-size: 1.25rem;
       color: var(--primary-dark);
     }
+
     .logo img {
       width: 28px;
       height: 28px;
@@ -152,24 +153,8 @@
       font-size: 1rem;
       max-width: 300px;
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: 0;
       line-height: 1.4;
-    }
-
-    .signup-panel a {
-      display: inline-block;
-      padding: 0.75rem 1.5rem;
-      background-color: #fff;
-      color: var(--primary);
-      border-radius: 50px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    .signup-panel a:hover {
-      background-color: rgba(255,255,255,0.8);
-      color: var(--primary-dark);
     }
 
     @media (max-width: 992px) {
@@ -215,12 +200,11 @@
     </div>
 
     <div class="signup-panel">
-      <button class="close-btn" onclick="location.href='updatedLayout.html';">&times;</button>
-      <h2>New Here?</h2>
+      <button class="close-btn" onclick="goHome()">&times;</button>
+      <h2>Welcome Back!</h2>
       <p>
-        Sign up and discover a great amount of new opportunities!
+        Log in to discover the best movies, handpicked just for you.
       </p>
-      <a href="#">Sign Up</a>
     </div>
 
   </div>
@@ -230,34 +214,19 @@
       event.preventDefault();
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
-      
+
       if (username === "bob" && password === "bobpass") {
-        // Store login state
         localStorage.setItem('isLoggedIn', 'true');
-        
-        // Check if we were opened from the main page
-        if (window.opener && !window.opener.closed) {
-          // Notify main page of successful login
-          window.opener.postMessage('loginSuccess', '*');
-          window.close();
-        } else {
-          // If not opened as popup, redirect to main page
-          window.location.href = "updatedLayout.html"; // or your main page filename
-        }
+        window.location.href = "updatedLayout.html";
       } else {
         alert("Invalid credentials. Try username: bob, password: bobpass");
       }
       return false;
     }
 
-    // Handle close button to go back to main page
-    document.querySelector('.close-btn').addEventListener('click', function() {
-      if (window.opener && !window.opener.closed) {
-        window.close();
-      } else {
-        window.location.href = "updatedLayout.html"; // or your main page filename
-      }
-    });
+    function goHome() {
+      window.location.href = "updatedLayout.html";
+    }
   </script>
 </body>
 </html>
