@@ -1000,6 +1000,9 @@ select:hover {
             const paginatedMovies = movies.slice(startIdx, endIdx);
             
             paginatedMovies.forEach(movie => {
+                // Only show favorites if logged in
+                const isFavorited = isLoggedIn && favourites.includes(movie.imdbID);
+                
                 const card = document.createElement('div');
                 card.className = 'movie-card';
                 const img = document.createElement('img');
@@ -1018,11 +1021,11 @@ select:hover {
                 
                 // Add rating badge
                 if (movie.Rated !== 'N/A') {
-                const ratingBadge = document.createElement('span');
-                ratingBadge.className = `rating-badge ${movie.RatedClass}`;
-                ratingBadge.title = `${movie.Rated} (${movie.vote_count} votes)`;
-                title.insertBefore(ratingBadge, title.firstChild);
-            }
+                    const ratingBadge = document.createElement('span');
+                    ratingBadge.className = `rating-badge ${movie.RatedClass}`;
+                    ratingBadge.title = `${movie.Rated} (${movie.vote_count} votes)`;
+                    title.insertBefore(ratingBadge, title.firstChild);
+                }
                 
                 // Add vote count indicator
                 const voteCountIndicator = document.createElement('span');
@@ -1041,8 +1044,8 @@ select:hover {
                 actionsDiv.className = 'movie-actions';
                 actionsDiv.innerHTML = `
                     <button class="info-btn" onclick="showMovieDetails('${movie.imdbID}')">Details</button>
-                    <button class="fav-btn ${favourites.includes(movie.imdbID) ? 'favorited' : ''}" onclick="toggleFavourite('${movie.imdbID}', this, event)">
-                        ${favourites.includes(movie.imdbID) ? '❤️ Added' : '♡ Add'}
+                    <button class="fav-btn ${isFavorited ? 'favorited' : ''}" onclick="toggleFavourite('${movie.imdbID}', this, event)">
+                        ${isFavorited ? '❤️ Added' : '♡ Add'}
                     </button>
                 `;
                 
@@ -1520,7 +1523,7 @@ select:hover {
 
         function toggleFavourite(movieId, button, event) {
             event.stopPropagation();
-            if (localStorage.getItem('isLoggedIn') !== 'true') {
+            if (!isLoggedIn) { // Use the global isLoggedIn variable
                 const message = document.createElement('div');
                 message.className = 'login-message';
                 message.innerHTML = `
@@ -1531,6 +1534,7 @@ select:hover {
                 document.body.appendChild(message);
                 return;
             }
+            
             const index = favourites.indexOf(movieId);
             if (index === -1) {
                 favourites.push(movieId);
@@ -1627,10 +1631,21 @@ select:hover {
         }
 
         function logout() {
+            const isOnFavoritesPage = document.querySelector('.controls button.secondary').textContent === "Home";
+            
             isLoggedIn = false;
             localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('favourites');
+            favourites = [];
             updateAuthUI();
             alert("You have been logged out.");
+            
+            // Refresh the display to update favorite buttons
+            if (isOnFavoritesPage) {
+                showHome(); // Redirect to home if on favorites page
+            } else {
+                displayMovies(currentMovies); // Just refresh the display otherwise
+            }
         }
 
         // Initialize
